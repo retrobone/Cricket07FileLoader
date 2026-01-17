@@ -1,5 +1,3 @@
-// Cricket 07 File Loader v1.0 (by retrobone) - 16.01.2026
-
 #include <windows.h>
 #include <string>
 #include <algorithm>
@@ -9,6 +7,10 @@
 
 constexpr uintptr_t HOOK_FILELOADER = 0x006E6B20;
 constexpr int PROLOGUE_SIZE = 6;
+constexpr uintptr_t MEMORYLIMIT_ADDRESS = 0x006FF4E4;
+constexpr DWORD ORIGINAL_GAME_LIMIT = 100663296;
+constexpr DWORD DEFAULT_LIMIT = ORIGINAL_GAME_LIMIT * 4;
+constexpr INT MAX_LIMIT_MB = 1024;
 
 typedef DWORD(__cdecl* ProcessAndHashFileName_t)(DWORD, char*, BYTE);
 ProcessAndHashFileName_t Gateway_FileLoader = nullptr;
@@ -106,11 +108,39 @@ static void InjectFileLoaderHook() {
     }
 }
 
+void ApplyMemoryLimitPatch() {
+    // Read from ini
+
+    int userMB = GetPrivateProfileIntA("MAIN", "MemoryLimit", 0, ".\\Cricket07FileLoader.ini");
+
+    DWORD newLimitBytes = 0;
+
+    // If missing (0) or too huge (>1024MB), use safe default (384MB)
+    if (userMB <= 0 || userMB > MAX_LIMIT_MB) {
+        newLimitBytes = DEFAULT_LIMIT;
+    }
+    else {
+        // Convert MB to Bytes (MB * 1024 * 1024)
+        newLimitBytes = (DWORD)(userMB * 1024 * 1024);
+    }
+
+    // Patch the Memory
+    DWORD oldProtect;
+
+    if (VirtualProtect((void*)MEMORYLIMIT_ADDRESS, sizeof(DWORD), PAGE_EXECUTE_READWRITE, &oldProtect)) {
+
+        // Overwrite the hardcoded 96MB limit
+        *(DWORD*)MEMORYLIMIT_ADDRESS = newLimitBytes;
+
+        VirtualProtect((void*)MEMORYLIMIT_ADDRESS, sizeof(DWORD), oldProtect, &oldProtect);
+    }
+}
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hModule);
         InjectFileLoaderHook();
+        ApplyMemoryLimitPatch();
     }
     return TRUE;
 }
