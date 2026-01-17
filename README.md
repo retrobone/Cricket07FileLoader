@@ -13,3 +13,9 @@ Load files from through real filename instead of hashed filename and increases l
 <br>
   <li>By default the game memory limit used for resources is <b>100663296 bytes</b> i.e. <b>96 MB</b>. This plugin increase that memory limit.</li>
 </ul>
+
+#  Installation
+<ul>
+  <li>Download Ultimate-ASI-Loader(ddraw.dll) from <a href="https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases">here</a> and extract where your game is </li>
+  <li><a href="https://github.com.retrobone/Cricket07FileLoader/releases">Download</a> the plugin and extract it to your main game directory </li>
+</ul>
