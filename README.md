@@ -16,6 +16,6 @@ Load files from through real filename instead of hashed filename and increases l
 
 #  Installation
 <ul>
-  <li>Download Ultimate-ASI-Loader(ddraw.dll) from <a href="https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases">here</a> and extract where your game is </li>
+  <li>Download <a href="https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases">Ultimate-ASI-Loader(ddraw.dll)</a> and extract to main game directory </li>
   <li><a href="https://github.com/retrobone/Cricket07FileLoader/releases">Download</a> the plugin and extract it to your main game directory </li>
 </ul>
